@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONI | Boutique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ninja+Naruto&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(#000, #200);
+      color: white;
+      font-family: 'Ninja Naruto', sans-serif;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background-color: #111;
+    }
+
+    header img {
+      height: 60px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #ff0000;
+      text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 20px #ff0000;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 2rem;
+      justify-content: center;
+    }
+
+    .item {
+      background: #111;
+      border: 2px solid red;
+      border-radius: 10px;
+      overflow: hidden;
+      width: 200px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .item:hover {
+      transform: scale(1.05);
+    }
+
+    .item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .item h2 {
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+
+    .item button {
+      margin-bottom: 1rem;
+      background: red;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+
+    #cart {
+      background: #222;
+      padding: 2rem;
+      margin: 2rem;
+      border-radius: 10px;
+    }
+
+    #cart ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    #cart li {
+      display: flex;
+      justify-content: space-between;
+      margin: 0.5rem 0;
+    }
+
+    #cart li button {
+      background: none;
+      border: none;
+      color: red;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    #cart li button:hover {
+      color: #ff5555;
+      text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
+    }
+
+    #checkout {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    #checkout a {
+      background: linear-gradient(45deg, #ff0000, #aa0000);
+      color: white;
+      padding: 0.6rem 1.2rem;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+      box-shadow: 0 0 10px #ff0000;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    #checkout a:hover {
+      background: linear-gradient(45deg, #ff4444, #cc0000);
+      transform: scale(1.05);
+    }
+
+    .payment-note {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      background: #111;
+      border: 1px solid #ff4444;
+      border-radius: 8px;
+      padding: 0.7rem;
+      text-align: center;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.postimg.cc/wT0C2rHy/ONI.png" alt="ONI Logo">
+    <h1>ONI | Boutique</h1>
+  </header>
+
+  <div class="container" id="products">
+    <!-- Les produits seront insérés ici par JS -->
+  </div>
+
+  <div id="cart">
+    <h2>Panier</h2>
+    <ul id="cart-items"></ul>
+    
+    <div id="checkout">
+      <p class="payment-note">
+        ⚠️ Merci d’envoyer un screen de votre paiement sur notre serveur Discord pour recevoir vos items.
+      </p>
+      <strong>Total : <span id="total">0,00 €</span></strong>
+      <a id="paypal-link" href="#" target="_blank">Payer avec PayPal</a>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      { name: "1 Reroll", price: 1.49, img: "https://i.postimg.cc/wxfKcP9t/Design-sans-titre-9.png" },
+      { name: "5 Reroll", price: 7.45, img: "https://i.postimg.cc/FHpm8xS8/Design-sans-titre-10.png" },
+      { name: "10 Reroll", price: 14.90, img: "https://i.postimg.cc/RFjgXjZm/Design-sans-titre-11.png" },
+      { name: "25 Reroll", price: 37.25, img: "https://i.postimg.cc/g2N6Y8RL/Design-sans-titre-12.png" },
+      { name: "50 Reroll", price: 74.50, img: "https://i.postimg.cc/WbNHK7bB/Design-sans-titre-13.png" },
+      { name: "100 Reroll", price: 149.00, img: "https://i.postimg.cc/WbNHK7bB/Design-sans-titre-13.png" }
+    ];
+
+    const cart = [];
+
+    function updateCart() {
+      const cartList = document.getElementById("cart-items");
+      const totalSpan = document.getElementById("total");
+      const paypalLink = document.getElementById("paypal-link");
+      cartList.innerHTML = "";
+
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        const li = document.createElement("li");
+        li.innerHTML = `
+          ${item.name} - ${item.price.toFixed(2)} €
+          <button onclick="removeItem(${index})">❌</button>
+        `;
+        cartList.appendChild(li);
+      });
+
+      totalSpan.textContent = total.toFixed(2) + " €";
+      paypalLink.href = `https://paypal.me/angelegoat?amount=${total.toFixed(2)}`;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function addToCart(product) {
+      cart.push(product);
+      updateCart();
+    }
+
+    const productsContainer = document.getElementById("products");
+    products.forEach(product => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <img src="${product.img}" alt="${product.name}" />
+        <h2>${product.name}</h2>
+        <p>${product.price.toFixed(2)} €</p>
+        <button onclick='addToCart(${JSON.stringify(product)})'>Ajouter</button>
+      `;
+      productsContainer.appendChild(div);
+    });
+  </script>
+</body>
+</html>
